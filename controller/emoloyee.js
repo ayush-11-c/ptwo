@@ -6,6 +6,13 @@ const newEmployee = async (req, res) => {
     if (!name || !email || !department) {
       return res.status(400).json({ message: "All fields are required" });
     }
+    const employeeExist = await Employee.findOne({
+      email,
+    });
+    if (employeeExist) {
+      return res.status(400).json({ message: "Employee already exist" });
+    }
+
     const employee = await Employee.create({
       name,
       email,
@@ -35,11 +42,13 @@ const getEmployees = async (req, res) => {
 };
 const getEmployeeById = async (req, res) => {
   try {
-    const { employeeId } = req.params;
-    if (!employeeId) {
+    const { id } = req.params;
+    console.log(req.params);
+    console.log(id);
+    if (!id) {
       return res.status(400).json({ message: "Employee Id is required" });
     }
-    const employee = await Employee.findById(employeeId);
+    const employee = await Employee.findById(id);
     return res.status(200).json({ success: true, employee });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -48,12 +57,12 @@ const getEmployeeById = async (req, res) => {
 const updateEmployee = async (req, res) => {
   try {
     const { name, email, department } = req.body;
-    const { employeeId } = req.params;
-    if (!employeeId) {
+    const { id } = req.params;
+    if (!id) {
       return res.status(400).json({ message: "Employee Id is required" });
     }
     const updatedEmployee = await Employee.findByIdAndUpdate(
-      employeeId,
+      id,
       { name, email, department },
       { new: true }
     );
@@ -67,11 +76,11 @@ const updateEmployee = async (req, res) => {
 };
 const deleteEmployee = async (req, res) => {
   try {
-    const { employeeId } = req.params;
-    if (!employeeId) {
+    const { id } = req.params;
+    if (!id) {
       return res.status(400).json({ message: "Employee Id is required" });
     }
-    await Employee.findByIdAndDelete(userId);
+    await Employee.findByIdAndDelete(id);
     return res.status(200).json({ success: true, message: "Employee deleted" });
   } catch (error) {
     return res.status(500).json({ message: error.message });

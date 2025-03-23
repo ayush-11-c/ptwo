@@ -10,7 +10,7 @@ import { isAuth } from "../middleware/auth.js";
 const app = express();
 
 app.get("/employees", getEmployees);
-app.post("employee", newEmployee);
+app.post("/employee", newEmployee);
 app.use(isAuth);
 app.get("/employee/:id", getEmployeeById);
 app.delete("/employee/:id", deleteEmployee);
